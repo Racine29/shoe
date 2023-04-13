@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:shoe/shoe_detail.dart';
 
 import 'shoe_model.dart';
 
@@ -80,8 +81,8 @@ class _ShoeHomeState extends State<ShoeHome> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14.0),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 14.0),
             child: Text(
               "Shoes",
               style: TextStyle(
@@ -131,68 +132,109 @@ class _ShoeHomeState extends State<ShoeHome> {
 
                       final percent = value - index;
                       double rotate = percent.abs().clamp(0.4, 1);
-                      // print(pi * -.4);
+                      double perpective = percent.clamp(-.4, 0);
+                      double rotateX = percent.clamp(-.1, 0);
+
                       return Center(
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            Transform(
-                              transform: Matrix4.identity()
-                              // ..setEntry(3, 1, -.01)
-                              // ..setEntry(1, 0, -.05)
-                              ,
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * .9,
-                                height: double.infinity,
-                                margin: const EdgeInsets.only(right: 30),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: shoe.color,
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                                left: 20,
-                                top: 20,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      shoe.name!,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 22,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(PageRouteBuilder(
+                                transitionDuration:
+                                    const Duration(milliseconds: 500),
+                                reverseTransitionDuration:
+                                    const Duration(milliseconds: 500),
+                                pageBuilder: (ctx, anim, _) {
+                                  return FadeTransition(
+                                    opacity: anim,
+                                    child: ShoeDetail(shoe: shoe),
+                                  );
+                                }));
+                          },
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              Transform(
+                                transform: Matrix4.identity()
+                                  ..setEntry(3, 2, .001)
+                                  ..rotateY(perpective)
+                                  ..rotateX(rotateX),
+                                // alignment: FractionalOffset.center,
+                                child: Center(
+                                  child: Hero(
+                                    tag: shoe.name!,
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          .9,
+                                      height: 300,
+                                      margin: const EdgeInsets.only(right: 30),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        color: shoe.color,
                                       ),
                                     ),
-                                    Text(
-                                      "\$ ${shoe.price}",
-                                      style: TextStyle(
-                                        color: Colors.white.withOpacity(.5),
-                                        fontWeight: FontWeight.normal,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                    Container(
-                                        height: 140,
-                                        width: 1,
-                                        color: Colors.white.withOpacity(.5)),
-                                  ],
-                                )),
-                            Positioned(
-                              right: 4,
-                              bottom: 0,
-                              child: Transform.rotate(
-                                angle: -rotate,
-                                child: Image.asset(
-                                  shoe.image!,
-                                  height: 320,
-                                  width: 320,
-                                  fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                              Positioned(
+                                  left: 20,
+                                  top: 20,
+                                  child: Transform(
+                                    transform: Matrix4.identity()
+                                      ..setEntry(3, 2, .001)
+                                      ..rotateY(perpective)
+                                      ..rotateX(rotateX),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          shoe.name!,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 22,
+                                          ),
+                                        ),
+                                        Text(
+                                          "\$ ${shoe.price}",
+                                          style: TextStyle(
+                                            color: Colors.white.withOpacity(.5),
+                                            fontWeight: FontWeight.normal,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        Container(
+                                            height: 140,
+                                            width: 1,
+                                            color:
+                                                Colors.white.withOpacity(.5)),
+                                      ],
+                                    ),
+                                  )),
+                              Positioned(
+                                right: 4,
+                                bottom: 0,
+                                child: Hero(
+                                  tag: shoe.image!,
+                                  child: Transform(
+                                    transform: Matrix4.identity()
+                                      ..setEntry(3, 2, .001)
+                                      ..rotateY(perpective.clamp(-.1, 0))
+                                      ..rotateX(rotateX.clamp(-.1, 0)),
+                                    child: Transform.rotate(
+                                      angle: -rotate,
+                                      child: Image.asset(
+                                        shoe.image!,
+                                        height: 320,
+                                        width: 320,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },
